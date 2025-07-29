@@ -1,3 +1,5 @@
+"use client";
+
 import useVariation from "../hooks/useVariation";
 
 interface VariationTesterProps {}

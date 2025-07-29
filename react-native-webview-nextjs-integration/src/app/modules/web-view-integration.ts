@@ -561,7 +561,7 @@ class HackleWebOnlyClient extends Emitter<{
 
   setDeviceId(deviceId: string) {
     this.client.setDeviceId(deviceId);
-    this.emit("user-updated", deviceId);
+    this.emitUserUpdated();
     return Promise.resolve();
   }
   setUserProperty(key: string, value: any) {
@@ -592,7 +592,7 @@ class HackleWebOnlyClient extends Emitter<{
     return Promise.resolve(this.client.unsetPhoneNumber());
   }
   resetUser() {
-    this.emitUserUpdated();
+    // this.emitUserUpdated();
     return Promise.resolve(this.client.resetUser());
   }
   variation(experimentKey: number): Promise<string> {

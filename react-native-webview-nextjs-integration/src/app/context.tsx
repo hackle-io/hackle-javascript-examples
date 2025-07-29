@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ContextType,
   createContext,
@@ -28,7 +30,6 @@ export default function HackleProvider({
   useEffect(() => {
     const onUserUpdated = () => {
       setValue((prevState) => ({
-        ...prevState,
         userVersion: prevState.userVersion + 1,
       }));
     };

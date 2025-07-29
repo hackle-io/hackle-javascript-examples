@@ -1,3 +1,5 @@
+"use client";
+
 import { useContext } from "react";
 import hackleClient from "../modules/client";
 import { HackleUserVersionContext } from "../context";
