@@ -7,5 +7,9 @@ export default function FeatureTester({}: FeatureTesterProps) {
     suspense: true,
   });
 
-  return <pre style={{ fontSize: 54 }}>{isOn ? "On" : "Off"}</pre>;
+  return (
+    <pre style={{ fontSize: 54, height: 400, backgroundColor: "#0065ff" }}>
+      {isOn ? "On" : "Off"}
+    </pre>
+  );
 }

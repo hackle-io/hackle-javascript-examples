@@ -5,14 +5,20 @@ import { useAsyncClient } from "./useAsyncClient";
 
 export default function useVariation(
   experimentKey: number,
+  defaultValue: string,
   options?: {
     suspense: boolean;
   }
 ) {
   const { userVersion } = useContext(HackleUserVersionContext);
-  return useAsyncClient(
+  const { data: variation, isLoading } = useAsyncClient(
     () => hackleClient.variation(experimentKey),
     [userVersion],
     options
   );
+
+  return {
+    variation: variation ?? defaultValue,
+    isLoading,
+  };
 }

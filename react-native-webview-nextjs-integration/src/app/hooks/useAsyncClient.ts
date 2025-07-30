@@ -7,22 +7,24 @@ export function useAsyncClient<T>(
   deps: any[] = [],
   options?: { suspense?: boolean }
 ) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<T | null>(null);
-  const promise = useRef<Promise<T> | null>(null);
+  const [promise, setPromise] = useState<Promise<T> | null>(null);
 
-  if (options?.suspense && promise.current) throw promise.current;
+  if (options?.suspense && promise) throw promise;
 
   useEffect(() => {
     setIsLoading(true);
-    promise.current = asyncFn();
-    promise.current
+    const promise = asyncFn();
+    setPromise(promise);
+
+    promise
       .then((res) => {
         setData(res);
       })
       .catch(() => {})
       .finally(() => {
-        promise.current = null;
+        setPromise(null);
         setIsLoading(false);
       });
   }, deps);

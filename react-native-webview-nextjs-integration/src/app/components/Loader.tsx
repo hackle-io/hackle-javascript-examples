@@ -3,6 +3,9 @@ export default function Loader() {
     <div
       style={{
         fontSize: 54,
+        height: 400,
+        backgroundColor: "white",
+        color: "black",
       }}>
       Loading ...
     </div>

@@ -7,5 +7,9 @@ export default function VariationTester({}: VariationTesterProps) {
     suspense: true,
   });
 
-  return <pre style={{ fontSize: 54 }}>{variation}</pre>;
+  return (
+    <pre style={{ fontSize: 54, height: 400, backgroundColor: "#ff5500" }}>
+      {variation}
+    </pre>
+  );
 }
