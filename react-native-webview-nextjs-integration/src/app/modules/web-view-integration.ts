@@ -592,7 +592,7 @@ class HackleWebOnlyClient extends Emitter<{
     return Promise.resolve(this.client.unsetPhoneNumber());
   }
   resetUser() {
-    // this.emitUserUpdated();
+    this.emitUserUpdated();
     return Promise.resolve(this.client.resetUser());
   }
   variation(experimentKey: number): Promise<string> {
