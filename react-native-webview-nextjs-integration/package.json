@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hackler/javascript-sdk": "^11.45.2",
+    "hackle-js-bridge": "file:lib/hackle",
     "next": "15.4.4",
     "react": "19.1.0",
     "react-dom": "19.1.0",

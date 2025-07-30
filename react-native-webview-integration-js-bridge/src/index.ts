@@ -1,3 +1,4 @@
+import { Emitter } from "./emitter";
 import {
   Config,
   createInstance,
@@ -11,7 +12,6 @@ import {
   User,
 } from "@hackler/javascript-sdk";
 import { v4 as uuidv4 } from "uuid";
-import { Emitter } from "./emitter";
 
 interface Port {
   postMessage(serialized: string): void;
@@ -561,7 +561,7 @@ class HackleWebOnlyClient extends Emitter<{
 
   setDeviceId(deviceId: string) {
     this.client.setDeviceId(deviceId);
-    this.emitUserUpdated();
+    this.emit("user-updated", deviceId);
     return Promise.resolve();
   }
   setUserProperty(key: string, value: any) {

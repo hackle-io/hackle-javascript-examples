@@ -14,7 +14,8 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-simplikit": "^0.0.40",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "hackle-js-bridge": "file:../react-native-webview-integration-js-bridge"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

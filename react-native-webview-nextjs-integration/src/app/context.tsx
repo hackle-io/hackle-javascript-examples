@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import HackleManager from "./modules/web-view-integration";
+import HackleManager from "hackle-js-bridge";
 
 export const HackleUserVersionContext = createContext({
   userVersion: 0,
