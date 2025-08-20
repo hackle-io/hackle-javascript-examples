@@ -9,18 +9,35 @@ function App() {
   return (
     <main>
       <HackleProvider hackleClient={hackleClient}>
+        {/* A/B 테스트 */}
         <div>
           <h2>Experiment [key: 50]</h2>
           <Suspense fallback={<Loader />}>
             <VariationTester />
           </Suspense>
         </div>
+        {/* 기능 플래그 */}
         <div>
           <h2>Feature Flag [key: 50]</h2>
           <Suspense fallback={<Loader />}>
             <FeatureTester />
           </Suspense>
         </div>
+
+        <section>
+          {/* 커스텀 이벤트 트래킹 */}
+          <button
+            onClick={() =>
+              hackleClient.track({
+                key: "click_button",
+                properties: {
+                  button_name: "custom",
+                },
+              })
+            }>
+            Track Custom Event
+          </button>
+        </section>
       </HackleProvider>
     </main>
   );
