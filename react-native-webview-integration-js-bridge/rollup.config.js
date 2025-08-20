@@ -26,6 +26,7 @@ export default {
       tsconfig: "./tsconfig.json",
       declaration: true,
       declarationDir: "dist/types",
+      outputToFilesystem: true,
     }),
   ],
   external: ["@hackler/javascript-sdk", "uuid"],

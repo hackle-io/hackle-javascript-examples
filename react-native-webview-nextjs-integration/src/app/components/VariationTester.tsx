@@ -10,8 +10,6 @@ export default function VariationTester({}: VariationTesterProps) {
     suspense: true,
   });
 
-  if (isLoading) return <Loader />;
-
   return (
     <pre style={{ fontSize: 54, height: 400, backgroundColor: "#ff5500" }}>
       {variation}
