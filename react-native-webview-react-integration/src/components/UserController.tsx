@@ -36,8 +36,18 @@ export default function UserController() {
         </button>
       </div>
       <div>
-        <input type="text" placeholder="key" />
-        <input type="text" placeholder="value" />
+        <input
+          type="text"
+          placeholder="key"
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="value"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
         <button
           onClick={() => {
             hackleClient.setUserProperty(key, value);
