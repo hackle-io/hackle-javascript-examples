@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import hackleClient from "../modules/client";
-import { HackleUserVersionContext } from "../context";
+import { HackleContext } from "../context";
 import { useAsyncClient } from "./useAsyncClient";
 
 export default function useRemoteConfig<T>(
@@ -12,7 +12,7 @@ export default function useRemoteConfig<T>(
     suspense: boolean;
   }
 ) {
-  const { userVersion } = useContext(HackleUserVersionContext);
+  const { userVersion } = useContext(HackleContext);
   const { data: config, isLoading } = useAsyncClient<T>(
     async (): Promise<T> => {
       const remoteConfig = hackleClient.remoteConfig();
