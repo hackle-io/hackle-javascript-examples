@@ -28,4 +28,9 @@ export interface HackleClientBase extends Emitter<{
     showUserExplorer: () => Promise<void>;
     hideUserExplorer: () => Promise<void>;
     fetch: () => Promise<void>;
+    onInitialized(config?: {
+        timeout?: number;
+    }): Promise<{
+        success: boolean;
+    }>;
 }
