@@ -4,6 +4,7 @@ import HackleProvider from "./context";
 import hackleClient from "./modules/client";
 import Loader from "./components/Loader";
 import FeatureTester from "./components/FeatureTester";
+import RemoteConfig from "./components/RemoteConfig";
 
 function App() {
   return (
@@ -21,6 +22,13 @@ function App() {
           <h2>Feature Flag [key: 50]</h2>
           <Suspense fallback={<Loader />}>
             <FeatureTester />
+          </Suspense>
+        </div>
+
+        <div>
+          <h2>Remote Config [key: targeting_rule_test]</h2>
+          <Suspense fallback={<Loader />}>
+            <RemoteConfig />
           </Suspense>
         </div>
 

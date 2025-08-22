@@ -130,6 +130,9 @@ class HackleWebViewClient
       }
     });
   }
+  onInitialized(config?: { timeout?: number }): Promise<{ success: boolean }> {
+    return Promise.resolve({ success: true });
+  }
 
   private createMessage(id: string, type: string, payload: any) {
     return JSON.stringify({
@@ -148,29 +151,33 @@ class HackleWebViewClient
   async getSessionId() {
     const id = this.createId();
 
-    return promiseWithTimeout<string>(
+    const { sessionId } = await promiseWithTimeout<{ sessionId: string }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "getSessionId", null)
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve("") }
+      { onTimeout: (resolve) => resolve({ sessionId: "" }) }
     );
+
+    return sessionId;
   }
 
   async getUser() {
     const id = this.createId();
 
-    return promiseWithTimeout<User>(
+    const { user } = await promiseWithTimeout<{ user: User }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "getUser", null)
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve({}) }
+      { onTimeout: (resolve) => resolve({ user: {} }) }
     );
+
+    return user;
   }
 
   setUser(user: User) {
@@ -353,10 +360,10 @@ class HackleWebViewClient
     );
   }
 
-  variation(experimentKey: number): Promise<string> {
+  async variation(experimentKey: number): Promise<string> {
     const id = this.createId();
 
-    return promiseWithTimeout<string>(
+    const { variation } = await promiseWithTimeout<{ variation: string }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "variation", {
@@ -365,15 +372,20 @@ class HackleWebViewClient
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve("A") }
+      { onTimeout: (resolve) => resolve({ variation: "A" }) }
     );
+    return variation;
   }
 
   async variationDetail(experimentKey: number) {
     const id = this.createId();
 
     try {
-      const payload = await promiseWithTimeout(
+      const payload = await promiseWithTimeout<{
+        variation: string;
+        reason: DecisionReason;
+        parameters: Record<string, string | number | boolean>;
+      }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "variationDetail", {
@@ -387,7 +399,7 @@ class HackleWebViewClient
         }
       );
 
-      const { variation, reason, parameters } = payload as any;
+      const { variation, reason, parameters } = payload;
 
       return Decision.of(
         variation,
@@ -399,10 +411,10 @@ class HackleWebViewClient
     }
   }
 
-  isFeatureOn(featureKey: number) {
+  async isFeatureOn(featureKey: number) {
     const id = this.createId();
 
-    return promiseWithTimeout<boolean>(
+    const { isOn } = await promiseWithTimeout<{ isOn: boolean }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "isFeatureOn", {
@@ -411,15 +423,21 @@ class HackleWebViewClient
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve(false) }
+      { onTimeout: (resolve) => resolve({ isOn: false }) }
     );
+
+    return isOn;
   }
 
   async featureFlagDetail(featureKey: number) {
     const id = this.createId();
 
     try {
-      const payload = await promiseWithTimeout<FeatureFlagDecision>(
+      const payload = await promiseWithTimeout<{
+        isOn: boolean;
+        reason: DecisionReason;
+        parameters: Record<string, string | number | boolean>;
+      }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "featureFlagDetail", {
@@ -430,7 +448,7 @@ class HackleWebViewClient
         },
         { onTimeout: (resolve, reject) => reject() }
       );
-      const { isOn, reason, parameters } = payload as any;
+      const { isOn, reason, parameters } = payload;
 
       return new FeatureFlagDecision(
         isOn,
@@ -467,7 +485,7 @@ class HackleWebViewClient
     const remoteConfigGetter = (key: string, defaultValue: any) => {
       const id = this.createId();
 
-      return promiseWithTimeout<string | number | boolean>(
+      return promiseWithTimeout<{ configValue: string | number | boolean }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "remoteConfig", {
@@ -604,7 +622,7 @@ class HackleWebOnlyClient
     this.emitUserUpdated();
     return Promise.resolve(this.client.resetUser());
   }
-  variation(experimentKey: number): Promise<string> {
+  variation(experimentKey: number) {
     return Promise.resolve(this.client.variation(experimentKey));
   }
   variationDetail(experimentKey: number) {
@@ -624,7 +642,8 @@ class HackleWebOnlyClient
   }
   remoteConfig() {
     const originConfigFetcher = (key: string, defaultValue: any) => {
-      return Promise.resolve(this.client.remoteConfig().get(key, defaultValue));
+      const value = this.client.remoteConfig().get(key, defaultValue);
+      return Promise.resolve({ configValue: value });
     };
 
     return new WebViewRemoteConfig(originConfigFetcher);
@@ -637,6 +656,9 @@ class HackleWebOnlyClient
   }
   fetch() {
     return Promise.resolve(this.client.fetch());
+  }
+  onInitialized(config?: { timeout?: number }) {
+    return this.client.onInitialized(config);
   }
 }
 

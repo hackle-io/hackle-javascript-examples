@@ -13,17 +13,51 @@ export const HackleUserVersionContext = createContext({
 
 interface ProviderProps {
   hackleClient: ReturnType<HackleManager["createInstance"]>;
+  timeout?: number;
 }
 
 export default function HackleProvider({
   children,
   hackleClient,
+  timeout,
 }: PropsWithChildren<ProviderProps>) {
   const [value, setValue] = useState<
     ContextType<typeof HackleUserVersionContext>
   >({
     userVersion: 0,
   });
+
+
+  useEffect(() => {
+    hackleClient
+      .onInitialized({ timeout })
+      .then(
+        () => {
+          setValue((prevState) => {
+            return {
+              ...prevState,
+              initialized: true,
+            };
+          });
+        },
+        () => {
+          setValue((prevState) => {
+            return {
+              ...prevState,
+              initialized: true,
+            };
+          });
+        }
+      )
+      .catch(() => {
+        setValue((prevState) => {
+          return {
+            ...prevState,
+            initialized: true,
+          };
+        });
+      });
+  }, [hackleClient]);
 
   useEffect(() => {
     const onUserUpdated = () => {

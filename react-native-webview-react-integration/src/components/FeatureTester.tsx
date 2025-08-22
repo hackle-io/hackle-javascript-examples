@@ -3,7 +3,7 @@ import useFeature from "../hooks/useFeature";
 interface FeatureTesterProps {}
 
 export default function FeatureTester({}: FeatureTesterProps) {
-  const { isOn } = useFeature(40, false, {
+  const { isOn } = useFeature(22, false, {
     suspense: true,
   });
 

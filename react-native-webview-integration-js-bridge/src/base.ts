@@ -44,4 +44,7 @@ export interface HackleClientBase
   showUserExplorer: () => Promise<void>;
   hideUserExplorer: () => Promise<void>;
   fetch: () => Promise<void>;
+  onInitialized(config?: { timeout?: number }): Promise<{
+    success: boolean;
+  }>;
 }
