@@ -180,7 +180,11 @@ class HackleWebViewClient
     return user;
   }
 
-  setUser(user: User) {
+  private emitUserUpdated() {
+    this.emit("user-updated", JSON.stringify(this.getUser()));
+  }
+
+  async setUser(user: User) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -191,10 +195,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserId(userId: string | undefined | null) {
+  async setUserId(userId: string | undefined | null) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -205,10 +211,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setDeviceId(deviceId: string) {
+  async setDeviceId(deviceId: string) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -219,10 +227,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserProperty(key: string, value: any) {
+  async setUserProperty(key: string, value: any) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -233,10 +243,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserProperties(properties: Record<string, any>) {
+  async setUserProperties(properties: Record<string, any>) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -247,10 +259,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  updateUserProperties(operations: PropertyOperations) {
+  async updateUserProperties(operations: PropertyOperations) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -264,7 +278,9 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
   updatePushSubscriptions(operations: HackleSubscriptionOperations) {
@@ -346,7 +362,7 @@ class HackleWebViewClient
     );
   }
 
-  resetUser() {
+  async resetUser() {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -357,7 +373,9 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
   async variation(experimentKey: number): Promise<string> {
@@ -576,32 +594,41 @@ class HackleWebOnlyClient
     return Promise.resolve(this.client.getUser());
   }
 
-  setUser(user: User) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUser(user));
+  async setUser(user: User) {
+    return Promise.resolve(this.client.setUser(user)).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserId(userId: string | undefined | null) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserId(userId));
+  async setUserId(userId: string | undefined | null) {
+    return Promise.resolve(this.client.setUserId(userId)).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setDeviceId(deviceId: string) {
-    this.client.setDeviceId(deviceId);
-    this.emit("user-updated", deviceId);
-    return Promise.resolve();
+  async setDeviceId(deviceId: string) {
+    return Promise.resolve(this.client.setDeviceId(deviceId)).then(() => {
+      this.emitUserUpdated();
+    });
   }
-  setUserProperty(key: string, value: any) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserProperty(key, value));
+  async setUserProperty(key: string, value: any) {
+    return Promise.resolve(this.client.setUserProperty(key, value)).then(() => {
+      this.emitUserUpdated();
+    });
   }
-  setUserProperties(properties: Record<string, any>) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserProperties(properties));
+  async setUserProperties(properties: Record<string, any>) {
+    return Promise.resolve(this.client.setUserProperties(properties)).then(
+      () => {
+        this.emitUserUpdated();
+      }
+    );
   }
-  updateUserProperties(operations: PropertyOperations) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.updateUserProperties(operations));
+  async updateUserProperties(operations: PropertyOperations) {
+    return Promise.resolve(this.client.updateUserProperties(operations)).then(
+      () => {
+        this.emitUserUpdated();
+      }
+    );
   }
   updatePushSubscriptions(operations: HackleSubscriptionOperations) {
     return Promise.resolve(this.client.updatePushSubscriptions(operations));
@@ -618,9 +645,10 @@ class HackleWebOnlyClient
   unsetPhoneNumber() {
     return Promise.resolve(this.client.unsetPhoneNumber());
   }
-  resetUser() {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.resetUser());
+  async resetUser() {
+    return Promise.resolve(this.client.resetUser()).then(() => {
+      this.emitUserUpdated();
+    });
   }
   variation(experimentKey: number) {
     return Promise.resolve(this.client.variation(experimentKey));
