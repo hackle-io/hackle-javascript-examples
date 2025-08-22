@@ -130,6 +130,9 @@ class HackleWebViewClient
       }
     });
   }
+  onInitialized(config?: { timeout?: number }): Promise<{ success: boolean }> {
+    return Promise.resolve({ success: true });
+  }
 
   private createMessage(id: string, type: string, payload: any) {
     return JSON.stringify({
@@ -148,32 +151,40 @@ class HackleWebViewClient
   async getSessionId() {
     const id = this.createId();
 
-    return promiseWithTimeout<string>(
+    const { sessionId } = await promiseWithTimeout<{ sessionId: string }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "getSessionId", null)
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve("") }
+      { onTimeout: (resolve) => resolve({ sessionId: "" }) }
     );
+
+    return sessionId;
   }
 
   async getUser() {
     const id = this.createId();
 
-    return promiseWithTimeout<User>(
+    const { user } = await promiseWithTimeout<{ user: User }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "getUser", null)
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve({}) }
+      { onTimeout: (resolve) => resolve({ user: {} }) }
     );
+
+    return user;
   }
 
-  setUser(user: User) {
+  private emitUserUpdated() {
+    this.emit("user-updated", JSON.stringify(this.getUser()));
+  }
+
+  async setUser(user: User) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -184,10 +195,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserId(userId: string | undefined | null) {
+  async setUserId(userId: string | undefined | null) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -198,10 +211,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setDeviceId(deviceId: string) {
+  async setDeviceId(deviceId: string) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -212,10 +227,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserProperty(key: string, value: any) {
+  async setUserProperty(key: string, value: any) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -226,10 +243,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserProperties(properties: Record<string, any>) {
+  async setUserProperties(properties: Record<string, any>) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -240,10 +259,12 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  updateUserProperties(operations: PropertyOperations) {
+  async updateUserProperties(operations: PropertyOperations) {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -257,7 +278,9 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
   updatePushSubscriptions(operations: HackleSubscriptionOperations) {
@@ -339,7 +362,7 @@ class HackleWebViewClient
     );
   }
 
-  resetUser() {
+  async resetUser() {
     const id = this.createId();
 
     return promiseWithTimeout<void>(
@@ -350,13 +373,15 @@ class HackleWebViewClient
         this.resolverRecord.set(id, resolve);
       },
       { onTimeout: (resolve) => resolve() }
-    );
+    ).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  variation(experimentKey: number): Promise<string> {
+  async variation(experimentKey: number): Promise<string> {
     const id = this.createId();
 
-    return promiseWithTimeout<string>(
+    const { variation } = await promiseWithTimeout<{ variation: string }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "variation", {
@@ -365,15 +390,20 @@ class HackleWebViewClient
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve("A") }
+      { onTimeout: (resolve) => resolve({ variation: "A" }) }
     );
+    return variation;
   }
 
   async variationDetail(experimentKey: number) {
     const id = this.createId();
 
     try {
-      const payload = await promiseWithTimeout(
+      const payload = await promiseWithTimeout<{
+        variation: string;
+        reason: DecisionReason;
+        parameters: Record<string, string | number | boolean>;
+      }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "variationDetail", {
@@ -387,7 +417,7 @@ class HackleWebViewClient
         }
       );
 
-      const { variation, reason, parameters } = payload as any;
+      const { variation, reason, parameters } = payload;
 
       return Decision.of(
         variation,
@@ -399,10 +429,10 @@ class HackleWebViewClient
     }
   }
 
-  isFeatureOn(featureKey: number) {
+  async isFeatureOn(featureKey: number) {
     const id = this.createId();
 
-    return promiseWithTimeout<boolean>(
+    const { isOn } = await promiseWithTimeout<{ isOn: boolean }>(
       (resolve) => {
         this.messageTransceiver.port.postMessage(
           this.createMessage(id, "isFeatureOn", {
@@ -411,15 +441,21 @@ class HackleWebViewClient
         );
         this.resolverRecord.set(id, resolve);
       },
-      { onTimeout: (resolve) => resolve(false) }
+      { onTimeout: (resolve) => resolve({ isOn: false }) }
     );
+
+    return isOn;
   }
 
   async featureFlagDetail(featureKey: number) {
     const id = this.createId();
 
     try {
-      const payload = await promiseWithTimeout<FeatureFlagDecision>(
+      const payload = await promiseWithTimeout<{
+        isOn: boolean;
+        reason: DecisionReason;
+        parameters: Record<string, string | number | boolean>;
+      }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "featureFlagDetail", {
@@ -430,7 +466,7 @@ class HackleWebViewClient
         },
         { onTimeout: (resolve, reject) => reject() }
       );
-      const { isOn, reason, parameters } = payload as any;
+      const { isOn, reason, parameters } = payload;
 
       return new FeatureFlagDecision(
         isOn,
@@ -467,7 +503,7 @@ class HackleWebViewClient
     const remoteConfigGetter = (key: string, defaultValue: any) => {
       const id = this.createId();
 
-      return promiseWithTimeout<string | number | boolean>(
+      return promiseWithTimeout<{ configValue: string | number | boolean }>(
         (resolve) => {
           this.messageTransceiver.port.postMessage(
             this.createMessage(id, "remoteConfig", {
@@ -558,32 +594,41 @@ class HackleWebOnlyClient
     return Promise.resolve(this.client.getUser());
   }
 
-  setUser(user: User) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUser(user));
+  async setUser(user: User) {
+    return Promise.resolve(this.client.setUser(user)).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setUserId(userId: string | undefined | null) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserId(userId));
+  async setUserId(userId: string | undefined | null) {
+    return Promise.resolve(this.client.setUserId(userId)).then(() => {
+      this.emitUserUpdated();
+    });
   }
 
-  setDeviceId(deviceId: string) {
-    this.client.setDeviceId(deviceId);
-    this.emit("user-updated", deviceId);
-    return Promise.resolve();
+  async setDeviceId(deviceId: string) {
+    return Promise.resolve(this.client.setDeviceId(deviceId)).then(() => {
+      this.emitUserUpdated();
+    });
   }
-  setUserProperty(key: string, value: any) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserProperty(key, value));
+  async setUserProperty(key: string, value: any) {
+    return Promise.resolve(this.client.setUserProperty(key, value)).then(() => {
+      this.emitUserUpdated();
+    });
   }
-  setUserProperties(properties: Record<string, any>) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.setUserProperties(properties));
+  async setUserProperties(properties: Record<string, any>) {
+    return Promise.resolve(this.client.setUserProperties(properties)).then(
+      () => {
+        this.emitUserUpdated();
+      }
+    );
   }
-  updateUserProperties(operations: PropertyOperations) {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.updateUserProperties(operations));
+  async updateUserProperties(operations: PropertyOperations) {
+    return Promise.resolve(this.client.updateUserProperties(operations)).then(
+      () => {
+        this.emitUserUpdated();
+      }
+    );
   }
   updatePushSubscriptions(operations: HackleSubscriptionOperations) {
     return Promise.resolve(this.client.updatePushSubscriptions(operations));
@@ -600,11 +645,12 @@ class HackleWebOnlyClient
   unsetPhoneNumber() {
     return Promise.resolve(this.client.unsetPhoneNumber());
   }
-  resetUser() {
-    this.emitUserUpdated();
-    return Promise.resolve(this.client.resetUser());
+  async resetUser() {
+    return Promise.resolve(this.client.resetUser()).then(() => {
+      this.emitUserUpdated();
+    });
   }
-  variation(experimentKey: number): Promise<string> {
+  variation(experimentKey: number) {
     return Promise.resolve(this.client.variation(experimentKey));
   }
   variationDetail(experimentKey: number) {
@@ -624,7 +670,8 @@ class HackleWebOnlyClient
   }
   remoteConfig() {
     const originConfigFetcher = (key: string, defaultValue: any) => {
-      return Promise.resolve(this.client.remoteConfig().get(key, defaultValue));
+      const value = this.client.remoteConfig().get(key, defaultValue);
+      return Promise.resolve({ configValue: value });
     };
 
     return new WebViewRemoteConfig(originConfigFetcher);
@@ -637,6 +684,9 @@ class HackleWebOnlyClient
   }
   fetch() {
     return Promise.resolve(this.client.fetch());
+  }
+  onInitialized(config?: { timeout?: number }) {
+    return this.client.onInitialized(config);
   }
 }
 

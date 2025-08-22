@@ -9,6 +9,8 @@ export default function HackleWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <HackleProvider hackleClient={hackleClient}>{children}</HackleProvider>
+    <HackleProvider hackleClient={hackleClient} supportSSR>
+      {children}
+    </HackleProvider>
   );
 }

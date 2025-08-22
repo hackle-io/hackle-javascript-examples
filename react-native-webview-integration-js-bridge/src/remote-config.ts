@@ -9,7 +9,7 @@ export default class WebViewRemoteConfig implements WebViewConfig {
     private readonly configFetcher: (
       key: string,
       defaultValue: string | number | boolean
-    ) => Promise<string | number | boolean>
+    ) => Promise<{ configValue: string | number | boolean }>
   ) {
     this.configFetcher = configFetcher;
   }
@@ -27,13 +27,15 @@ export default class WebViewRemoteConfig implements WebViewConfig {
         throw new Error("invoke result data not exists");
       }
 
+      const { configValue } = result;
+
       switch (typeof defaultValue) {
         case "number":
-          return Number(result);
+          return Number(configValue);
         case "boolean":
-          return Boolean(result);
+          return Boolean(configValue);
         default:
-          return result;
+          return configValue;
       }
     } catch (e) {
       console.error(

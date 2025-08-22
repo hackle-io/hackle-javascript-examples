@@ -10,7 +10,13 @@ export default function RemoteConfig() {
   );
 
   return (
-    <pre style={{ fontSize: 54, height: 400, backgroundColor: "#75be6b" }}>
+    <pre
+      style={{
+        width: "100%",
+        fontSize: 24,
+        height: 50,
+        backgroundColor: "#75be6b",
+      }}>
       {config}
     </pre>
   );

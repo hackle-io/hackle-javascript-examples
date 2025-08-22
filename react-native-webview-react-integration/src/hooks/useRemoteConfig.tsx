@@ -40,6 +40,8 @@ export default function useRemoteConfig<T>(
     options
   );
 
+  console.log("### useRmoteCOnfig", config);
+
   return {
     config: config ?? defaultConfig,
     isLoading,
