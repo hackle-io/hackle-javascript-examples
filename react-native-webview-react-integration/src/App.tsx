@@ -5,47 +5,45 @@ import hackleClient from "./modules/client";
 import Loader from "./components/Loader";
 import FeatureTester from "./components/FeatureTester";
 import RemoteConfig from "./components/RemoteConfig";
+import CustomTracker from "./components/CustomTracker";
+import UserController from "./components/UserController";
 
 function App() {
   return (
     <main>
       <HackleProvider hackleClient={hackleClient}>
         {/* A/B 테스트 */}
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <UserController />
+          <CustomTracker />
+          <button onClick={() => hackleClient.showUserExplorer()}>
+            Show UserExplorer
+          </button>
+        </div>
         <div>
-          <h2>Experiment [key: 50]</h2>
-          <Suspense fallback={<Loader />}>
-            <VariationTester />
-          </Suspense>
+          <h2>
+            Experiment <br /> [key: 40]
+          </h2>
+          <VariationTester />
         </div>
         {/* 기능 플래그 */}
         <div>
-          <h2>Feature Flag [key: 50]</h2>
+          <h2>
+            Feature Flag <br /> [key: 22]
+          </h2>
           <Suspense fallback={<Loader />}>
             <FeatureTester />
           </Suspense>
         </div>
 
         <div>
-          <h2>Remote Config [key: targeting_rule_test]</h2>
+          <h2>
+            Remote Config <br /> [key: targeting_rule_test]
+          </h2>
           <Suspense fallback={<Loader />}>
             <RemoteConfig />
           </Suspense>
         </div>
-
-        <section>
-          {/* 커스텀 이벤트 트래킹 */}
-          <button
-            onClick={() =>
-              hackleClient.track({
-                key: "click_button",
-                properties: {
-                  button_name: "custom",
-                },
-              })
-            }>
-            Track Custom Event
-          </button>
-        </section>
       </HackleProvider>
     </main>
   );

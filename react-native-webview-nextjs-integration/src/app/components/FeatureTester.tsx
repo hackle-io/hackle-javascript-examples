@@ -11,7 +11,7 @@ export default function FeatureTester({}: FeatureTesterProps) {
   });
 
   return (
-    <pre style={{ fontSize: 54, height: 400, backgroundColor: "#0065ff" }}>
+    <pre style={{ fontSize: 24, height: 50, backgroundColor: "#0065ff" }}>
       {String(isOn)}
     </pre>
   );

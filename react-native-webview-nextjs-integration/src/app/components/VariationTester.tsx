@@ -1,7 +1,6 @@
 "use client";
 
 import useVariation from "../hooks/useVariation";
-import Loader from "./Loader";
 
 interface VariationTesterProps {}
 
@@ -11,7 +10,7 @@ export default function VariationTester({}: VariationTesterProps) {
   });
 
   return (
-    <pre style={{ fontSize: 54, height: 400, backgroundColor: "#ff5500" }}>
+    <pre style={{ fontSize: 24, height: 50, backgroundColor: "#ff5500" }}>
       {variation}
     </pre>
   );
