@@ -2,7 +2,7 @@
 
 import { useContext } from "react";
 import hackleClient from "../modules/client";
-import { HackleUserVersionContext } from "../context";
+import { HackleContext } from "../context";
 import { useAsyncClient } from "./useAsyncClient";
 
 export default function useVariation(
@@ -12,7 +12,7 @@ export default function useVariation(
     suspense: boolean;
   }
 ) {
-  const { userVersion } = useContext(HackleUserVersionContext);
+  const { userVersion } = useContext(HackleContext);
   const { data: variation, isLoading } = useAsyncClient(
     () => hackleClient.variation(experimentKey),
     [userVersion],

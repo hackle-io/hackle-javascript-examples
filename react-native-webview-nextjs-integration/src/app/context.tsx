@@ -9,27 +9,30 @@ import {
 } from "react";
 import HackleManager from "hackle-js-bridge";
 
-export const HackleUserVersionContext = createContext({
+export const HackleContext = createContext({
   userVersion: 0,
+  initialized: false,
 });
 
 interface ProviderProps {
   hackleClient: ReturnType<HackleManager["createInstance"]>;
+  supportSSR?: boolean;
 }
 
 export default function HackleProvider({
   children,
   hackleClient,
+  supportSSR = false,
 }: PropsWithChildren<ProviderProps>) {
-  const [value, setValue] = useState<
-    ContextType<typeof HackleUserVersionContext>
-  >({
+  const [value, setValue] = useState<ContextType<typeof HackleContext>>({
     userVersion: 0,
+    initialized: false,
   });
 
   useEffect(() => {
     const onUserUpdated = () => {
       setValue((prevState) => ({
+        ...prevState,
         userVersion: prevState.userVersion + 1,
       }));
     };
@@ -41,9 +44,44 @@ export default function HackleProvider({
     };
   }, [hackleClient]);
 
-  return (
-    <HackleUserVersionContext.Provider value={value}>
-      {children}
-    </HackleUserVersionContext.Provider>
-  );
+  useEffect(() => {
+    hackleClient
+      .onInitialized()
+      .then(
+        () => {
+          setValue((prevState) => {
+            return {
+              ...prevState,
+              initialized: true,
+            };
+          });
+        },
+        () => {
+          setValue((prevState) => {
+            return {
+              ...prevState,
+              initialized: true,
+            };
+          });
+        }
+      )
+      .catch(() => {
+        setValue((prevState) => {
+          return {
+            ...prevState,
+            initialized: true,
+          };
+        });
+      });
+  }, [hackleClient]);
+
+  if (supportSSR) {
+    return (
+      <HackleContext.Provider value={value}>{children}</HackleContext.Provider>
+    );
+  }
+
+  return value.initialized ? (
+    <HackleContext.Provider value={value}>{children}</HackleContext.Provider>
+  ) : null;
 }
