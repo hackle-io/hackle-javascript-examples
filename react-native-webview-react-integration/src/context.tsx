@@ -7,8 +7,9 @@ import {
 } from "react";
 import HackleManager from "hackle-js-bridge";
 
-export const HackleUserVersionContext = createContext({
+export const HackleContext = createContext({
   userVersion: 0,
+  initialized: false,
 });
 
 interface ProviderProps {
@@ -21,12 +22,10 @@ export default function HackleProvider({
   hackleClient,
   timeout,
 }: PropsWithChildren<ProviderProps>) {
-  const [value, setValue] = useState<
-    ContextType<typeof HackleUserVersionContext>
-  >({
+  const [value, setValue] = useState<ContextType<typeof HackleContext>>({
     userVersion: 0,
+    initialized: false,
   });
-
 
   useEffect(() => {
     hackleClient
@@ -74,9 +73,7 @@ export default function HackleProvider({
     };
   }, [hackleClient]);
 
-  return (
-    <HackleUserVersionContext.Provider value={value}>
-      {children}
-    </HackleUserVersionContext.Provider>
-  );
+  return value.initialized ? (
+    <HackleContext.Provider value={value}>{children}</HackleContext.Provider>
+  ) : null;
 }
