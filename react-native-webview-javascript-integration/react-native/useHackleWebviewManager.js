@@ -69,6 +69,8 @@ export default function useHackleWebviewManager({ postMessage, hackleClient }) {
                     return remoteConfig(payload, id, type);
                 case 'showUserExplorer':
                     return showUserExplorer(id, type);
+                case 'hideUserExplorer':
+                    return hideUserExplorer(id, type);
                 case 'fetch':
                     return fetch(id, type);
                 case 'track':
@@ -212,6 +214,11 @@ export default function useHackleWebviewManager({ postMessage, hackleClient }) {
 
     const showUserExplorer = async (id, type) => {
         await hackleClient.showUserExplorer();
+        sendMessage(id, type);
+    };
+
+    const hideUserExplorer = async (id, type) => {
+        await hackleClient.hideUserExplorer();
         sendMessage(id, type);
     };
 
