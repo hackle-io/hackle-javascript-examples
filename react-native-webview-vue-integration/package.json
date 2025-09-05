@@ -11,6 +11,7 @@
   "dependencies": {
     "@hackler/javascript-devtools": "^1.0.3",
     "@hackler/javascript-sdk": "^11.37.1",
+    "hackle-js-bridge": "file:lib/hackle",
     "uuid": "^11.0.3",
     "vue": "^3.5.13"
   },
