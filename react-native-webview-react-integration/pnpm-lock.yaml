@@ -6,11 +6,11 @@ settings:
 
 dependencies:
   '@hackler/javascript-sdk':
-    specifier: ^11.45.2
-    version: 11.45.2
+    specifier: ^11.48.0
+    version: 11.48.0
   hackle-js-bridge:
-    specifier: file:../react-native-webview-integration-js-bridge
-    version: file:../react-native-webview-integration-js-bridge(@hackler/javascript-sdk@11.45.2)
+    specifier: file:../submodules/javascript/dist
+    version: file:../submodules/javascript/dist
   react:
     specifier: ^19.1.0
     version: 19.1.0
@@ -546,8 +546,8 @@ packages:
       levn: 0.4.1
     dev: true
 
-  /@hackler/javascript-sdk@11.45.2:
-    resolution: {integrity: sha512-02vwfOANPZ/4k0VKknYfsALqKxoF6sPyjkWrDOBjZzpjjg2u4ubCyj0oMoVOAwiYQf615yVcTh4KpYOP7EYDtA==}
+  /@hackler/javascript-sdk@11.48.0:
+    resolution: {integrity: sha512-tzcNB3jfBvvT6DnsadIeOoLqH7p/W6L1w6553MPoLMsGJsQfsBoPwTR9sBMMYy3hWohNToIz/1OwV2v1CN09bA==}
     engines: {node: '>=10.0.0'}
     dependencies:
       js-base64: 3.7.7
@@ -1621,13 +1621,7 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  file:../react-native-webview-integration-js-bridge(@hackler/javascript-sdk@11.45.2):
-    resolution: {directory: ../react-native-webview-integration-js-bridge, type: directory}
-    id: file:../react-native-webview-integration-js-bridge
+  file:../submodules/javascript/dist:
+    resolution: {directory: ../submodules/javascript/dist, type: directory}
     name: hackle-js-bridge
-    peerDependencies:
-      '@hackler/javascript-sdk': ^11.45.2
-    dependencies:
-      '@hackler/javascript-sdk': 11.45.2
-      uuid: 11.1.0
     dev: false

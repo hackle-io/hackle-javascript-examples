@@ -7,10 +7,13 @@ settings:
 dependencies:
   '@hackler/javascript-devtools':
     specifier: ^1.0.3
-    version: 1.0.3(@hackler/javascript-sdk@11.37.1)
+    version: 1.0.3(@hackler/javascript-sdk@11.48.0)
   '@hackler/javascript-sdk':
-    specifier: ^11.37.1
-    version: 11.37.1
+    specifier: ^11.48.0
+    version: 11.48.0
+  hackle-js-bridge:
+    specifier: file:../submodules/javascript/dist
+    version: file:../submodules/javascript/dist
   uuid:
     specifier: ^11.0.3
     version: 11.0.3
@@ -266,18 +269,18 @@ packages:
     dev: true
     optional: true
 
-  /@hackler/javascript-devtools@1.0.3(@hackler/javascript-sdk@11.37.1):
+  /@hackler/javascript-devtools@1.0.3(@hackler/javascript-sdk@11.48.0):
     resolution: {integrity: sha512-EOhbHWKRBAjuD2vkPPztX6vWJwaF/YBBA6+o7dS0aRp5noFm8PFMtLKrQBuwokFUNfT4dHJ+NYKVuoVIFrZ1Kg==}
     engines: {node: '>=8.0.0'}
     peerDependencies:
       '@hackler/javascript-sdk': ^11.21.0
     dependencies:
-      '@hackler/javascript-sdk': 11.37.1
+      '@hackler/javascript-sdk': 11.48.0
     dev: false
 
-  /@hackler/javascript-sdk@11.37.1:
-    resolution: {integrity: sha512-J5xW4OXfcciF8wWeaw3UM/l8goi7xkBK05HnnentB6EQ7oQfap6pUOnaXpAebkR+y05lKrKaMIH9srLr7ij+Dw==}
-    engines: {node: '>=8.0.0'}
+  /@hackler/javascript-sdk@11.48.0:
+    resolution: {integrity: sha512-tzcNB3jfBvvT6DnsadIeOoLqH7p/W6L1w6553MPoLMsGJsQfsBoPwTR9sBMMYy3hWohNToIz/1OwV2v1CN09bA==}
+    engines: {node: '>=10.0.0'}
     dependencies:
       js-base64: 3.7.7
       uuid: 8.3.2
@@ -696,3 +699,8 @@ packages:
       '@vue/runtime-dom': 3.5.13
       '@vue/server-renderer': 3.5.13(vue@3.5.13)
       '@vue/shared': 3.5.13
+
+  file:../submodules/javascript/dist:
+    resolution: {directory: ../submodules/javascript/dist, type: directory}
+    name: hackle-js-bridge
+    dev: false

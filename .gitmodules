@@ -1,0 +1,4 @@
+[submodule "submodules"]
+	path = submodules
+	url = https://github.com/hackle-io/hackle-react-native-web-app-helper
+	branch = feature/react-native-webapp-api-version-up

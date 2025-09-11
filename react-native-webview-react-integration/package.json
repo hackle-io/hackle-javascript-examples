@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hackler/javascript-sdk": "^11.45.2",
+    "@hackler/javascript-sdk": "^11.48.0",
+    "hackle-js-bridge": "file:../submodules/javascript/dist",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-simplikit": "^0.0.40",
-    "uuid": "^11.1.0",
-    "hackle-js-bridge": "file:../react-native-webview-integration-js-bridge"
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
